@@ -1,9 +1,4 @@
-import lejos.nxt.LightSensor;
-import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.SensorPort;
-import lejos.nxt.TouchSensor;
-import lejos.nxt.UltrasonicSensor;
+import lejos.nxt.*;
 
 public class assignment
 {
@@ -13,36 +8,42 @@ public class assignment
   
   public assignment()
   {
-    this.light = new LightSensor(SensorPort.S4);
-    this.usonic = new UltrasonicSensor(SensorPort.S3);
-    this.touch = new TouchSensor(SensorPort.S1);
+    light = new LightSensor(SensorPort.S4);
+    usonic = new UltrasonicSensor(SensorPort.S3);
+    touch = new TouchSensor(SensorPort.S1);
     
+	while (Button.ENTER.isDown()) {
+		// wait
+	}
+	
     run();
   }
   
   private void run()
   {
-    int i = 1;
-    while (i != 0)
-    {
-      if (this.usonic.getDistance() < 5)
-      {
-        Motor.B.stop();
-        Motor.A.rotate(1080);
-      }
-      if (this.light.getLightValue() > 80)
-      {
-        Motor.A.stop();
-        Motor.B.stop();
-        i = 0;
-      }
-      Motor.A.forward();
-      Motor.B.forward();
+    boolean end = false;
+    while (!end) {
+		if (usonic.getDistance() < 5){
+			Motor.B.stop();
+			Motor.A.rotate(1080);
+		} else if (light.getLightValue() > 80) {
+			Motor.A.stop();
+			Motor.B.stop();
+			end = true;
+		} else if (touch.isPressed()) {
+			Motor.A.stop();
+			Motor.B.rotate(1080);
+		} else {
+			Motor.A.forward();
+			Motor.B.forward();
+		}		
+		
+		end = Button.ENTER.isDown();
+	 
     }
   }
   
-  private static void main(String[] paramArrayOfString)
-  {
+  public static void main(String[] args) {
     new assignment();
   }
 }
